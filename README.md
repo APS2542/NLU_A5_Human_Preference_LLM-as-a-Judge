@@ -8,86 +8,186 @@
 
 ---
 
-# Overview
+# Project Overview
 
-This project explores **alignment and evaluation of Large Language Models (LLMs)** using **Direct Preference Optimization (DPO)** and **LLM-as-a-Judge evaluation**.
+This project explores **alignment and evaluation of Large Language Models (LLMs)** using:
 
-The goal is to fine-tune a pre-trained language model using **human preference data** and evaluate whether the fine-tuned model produces **more truthful and helpful responses**.
+* **Direct Preference Optimization (DPO)** for model alignment
+* **LLM-as-a-Judge** for automatic evaluation
 
-The evaluation compares the **baseline model** and the **DPO fine-tuned model** using a strong LLM judge on the AlpacaEval benchmark.
-
----
-
-# Tasks
-
-## Task 1 — Dataset Preparation
-
-We use the dataset:
-
-`tatsu-lab/alpaca_eval`
-
-Training data comes from:
-
-`jondurbin/truthy-dpo-v0.1`
-
-Each training example contains:
-
-* **prompt** – user instruction
-* **chosen** – preferred truthful response
-* **rejected** – incorrect or hallucinated response
-
-The dataset is cleaned and filtered before training.
+The objective is to fine-tune a pre-trained language model to produce **more truthful and helpful responses**, and then evaluate whether the fine-tuned model improves over the original base model.
 
 ---
 
-## Task 2 — DPO Training
+# Project Pipeline
 
-The model is fine-tuned using **Direct Preference Optimization (DPO)**.
+```
+Human Preference Dataset
+        │
+        │
+        ▼
+Dataset Cleaning & Preparation
+(prompt, chosen, rejected)
+        │
+        ▼
+DPO Training
+(Base Model → Fine-tuned Model)
+        │
+        ▼
+Model Upload to HuggingFace
+        │
+        ▼
+Evaluation with AlpacaEval
+        │
+        ▼
+LLM Judge (GPT-4o-mini)
+        │
+        ▼
+Win Rate Calculation
+```
+
+---
+
+# Task 1 — Dataset Preparation
+
+We use a preference dataset designed to improve model truthfulness.
+
+Dataset:
+
+```
+jondurbin/truthy-dpo-v0.1
+```
+
+Each data sample contains:
+
+| Field    | Description                        |
+| -------- | ---------------------------------- |
+| prompt   | user instruction                   |
+| chosen   | preferred truthful response        |
+| rejected | incorrect or hallucinated response |
+
+The dataset is:
+
+* cleaned
+* filtered for valid rows
+* formatted for DPO training
+
+---
+
+# Task 2 — Model Training with DPO
+
+We fine-tune a pre-trained language model using **Direct Preference Optimization (DPO)**.
 
 ### Base Model
 
-`Qwen/Qwen2.5-0.5B-Instruct`
+```
+Qwen/Qwen2.5-0.5B-Instruct
+```
 
-### Training Method
+### Training Setup
 
-* DPOTrainer (from TRL)
-* LoRA for efficient fine-tuning
-* Small subset of dataset for faster training
+| Parameter          | Value      |
+| ------------------ | ---------- |
+| Training Method    | DPOTrainer |
+| Fine-tuning Method | LoRA       |
+| Training Samples   | 10         |
+| Epochs             | 1          |
+| Learning Rate      | 5e-6       |
 
-Training loss is recorded and visualized to monitor the optimization process.
+LoRA is used to reduce memory usage and make training feasible in Google Colab.
+
+### Training Flow
+
+```
+Prompt
+  │
+  ├── Chosen Response (preferred)
+  │
+  └── Rejected Response (incorrect)
+          │
+          ▼
+DPO Optimization
+          │
+          ▼
+Model learns to prefer chosen responses
+```
+
+### Training Loss
+
+Training loss is logged during optimization and visualized to monitor the training process.
 
 ---
 
-## Task 3 — HuggingFace Model Upload
+# Task 3 — HuggingFace Model Upload
 
-The trained model is uploaded to HuggingFace Hub.
+After training, the fine-tuned model is uploaded to HuggingFace Hub.
 
 Model Link:
 
+```
 https://huggingface.co/Aphisit-xt/qwen-dpo-model
+```
 
-This allows the fine-tuned model to be reused and evaluated easily.
+This allows the trained model to be reused and evaluated easily.
 
 ---
 
-## Task 4 — Evaluation with LLM-as-a-Judge
+# Task 4 — Evaluation with LLM-as-a-Judge
 
-To evaluate model performance, we use the **AlpacaEval helpful_base benchmark**.
+To evaluate model performance, we use the **AlpacaEval benchmark**.
+
+Dataset:
+
+```
+tatsu-lab/alpaca_eval
+```
+
+Subset used:
+
+```
+helpful_base
+```
 
 ### Evaluation Process
 
-1. Randomly sample **15 prompts** from AlpacaEval.
-2. Generate responses from:
+1. Randomly sample **15 prompts**
+2. Generate responses using:
 
    * **Model A:** Base model
    * **Model B:** DPO fine-tuned model
-3. Use **GPT-4o-mini as an automatic judge** to determine which response is better.
+3. Send both responses to an **LLM judge**
+4. The judge selects the better answer
 
-The judge outputs one of:
+Possible outputs:
 
-* Model A
-* Model B
-* Tie
+```
+Model A
+Model B
+Tie
+```
+
+---
+
+# Evaluation Pipeline
+
+```
+Prompt
+   │
+   ├── Base Model (Model A)
+   │        │
+   │        └── Response A
+   │
+   └── DPO Model (Model B)
+            │
+            └── Response B
+                    │
+                    ▼
+             LLM Judge
+           (GPT-4o-mini)
+                    │
+                    ▼
+                Verdict
+```
 
 ---
 
@@ -101,43 +201,53 @@ The judge outputs one of:
 | Ties             | 8       |
 | **DPO Win Rate** | **60%** |
 
-Win Rate Formula:
+### Win Rate Formula
 
-[
-WinRate = \frac{ModelB + 0.5 \times Tie}{Total} \times 100
-]
+```
+Win Rate =
+(Model B Wins + 0.5 × Ties) / Total Evaluations × 100
+```
 
 ---
 
 # Discussion
 
-The evaluation results show that the **DPO-trained model wins more comparisons than the baseline model**.
+The results show that the **DPO-trained model wins more comparisons than the baseline model**.
 
-However, a relatively large number of ties indicates that many responses are similar in quality. This is expected because:
+However, many responses result in ties, which suggests that:
 
-* The training dataset is small
 * The base model is already strong
+* The training dataset is relatively small
+* Limited training samples reduce the magnitude of improvement
 
-Despite the limited training samples, the results suggest that **DPO improves response quality in several cases**.
+Despite the small training size, the results suggest that **DPO can improve response quality in some cases**.
 
 ---
 
 # Technologies Used
 
-* Python
-* HuggingFace Transformers
-* TRL (DPOTrainer)
-* PEFT (LoRA)
-* Datasets
-* OpenAI API
-* Google Colab
+| Tool         | Purpose                   |
+| ------------ | ------------------------- |
+| Python       | main programming language |
+| Transformers | loading and running LLMs  |
+| TRL          | DPO training              |
+| PEFT (LoRA)  | efficient fine-tuning     |
+| Datasets     | dataset loading           |
+| OpenAI API   | LLM judge                 |
+| Google Colab | training environment      |
 
 ---
 
 # References
 
-* https://huggingface.co/docs/trl/main/dpo_trainer
-* https://huggingface.co/datasets/jondurbin/truthy-dpo-v0.1
-* https://huggingface.co/datasets/tatsu-lab/alpaca_eval
+DPO Trainer
+https://huggingface.co/docs/trl/main/dpo_trainer
+
+Truthful DPO Dataset
+https://huggingface.co/datasets/jondurbin/truthy-dpo-v0.1
+
+AlpacaEval Benchmark
+https://huggingface.co/datasets/tatsu-lab/alpaca_eval
 
 ---
+
