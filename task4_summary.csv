@@ -1,0 +1,2 @@
+num_samples,model_a_wins,model_b_wins,ties,dpo_win_rate_percent
+15,1,6,8,66.67
