@@ -16,7 +16,6 @@ This repository contains the notebook, exported report, and output files generat
 ├── A5_notebook_st126130.ipynb      # Main notebook
 ├── A5_notebook_st126130.pdf        # Notebook export        
 ├── README.md                       # Project description
-├── judge_progress.csv              # Judging progress
 ├── judge_results.csv               # Judging results
 ├── model_outputs.csv               # Model outputs
 └── task4_summary.csv               # Task 4 summary  
