@@ -112,6 +112,27 @@ Qwen/Qwen2.5-0.5B-Instruct
 
 LoRA is used to reduce memory usage and make training feasible in Google Colab.
 
+### Hyperparameter Experiment
+
+To find the optimal learning rate, we experimented with 3 configurations 
+while keeping all other hyperparameters constant.
+
+| Config | Initial Loss | Final Loss | Min Loss |
+|--------|-------------|------------|----------|
+| LR=1e-5 | 0.6931 | 0.6660 | 0.6532 |
+| LR=5e-6 (baseline) | 0.6931 | 0.6791 | 0.6588 |
+| LR=1e-6 | 0.6931 | 0.6855 | 0.6603 |
+
+![Hyperparameter Loss Comparison](hyperparameter_loss_comparison.png)
+
+**Discussion:**  
+- `LR=1e-5` achieved the lowest final and minimum loss, indicating faster convergence  
+- `LR=5e-6` provided stable and balanced convergence  
+- `LR=1e-6` converged the slowest due to the smaller update steps  
+
+The baseline `LR=5e-6` was selected for the final model as it offers 
+a good balance between training stability and convergence speed.
+
 ### Training Flow
 
 ```
