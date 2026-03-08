@@ -16,6 +16,8 @@ This repository contains the notebook, exported report, and output files generat
 ├── A5_notebook_st126130.ipynb      # Main notebook
 ├── A5_notebook_st126130.pdf        # Notebook export        
 ├── README.md                       # Project description
+├── hyperparameter_loss_comparison.png  # Hyperparameter comparison
+├── hyperparameter_summary.csv          # Hyperparameter summary
 ├── judge_results.csv               # Judging results
 ├── model_outputs.csv               # Model outputs
 └── task4_summary.csv               # Task 4 summary  
