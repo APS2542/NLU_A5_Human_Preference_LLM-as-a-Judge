@@ -1,0 +1,4 @@
+Config,Initial Loss,Final Loss,Min Loss,Steps
+LR=1e-5,0.6931,0.666,0.6532,10
+LR=5e-6 (baseline),0.6931,0.6791,0.6588,10
+LR=1e-6,0.6931,0.6855,0.6603,10
