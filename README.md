@@ -7,8 +7,23 @@
 **Student ID:** st126130
 
 ---
+## Files Structure
 
-# Project Overview
+This repository contains the notebook, exported report, and output files generated during the assignment.
+
+```
+.
+├── A5_notebook_st126130.ipynb      # Main notebook
+├── A5_notebook_st126130.pdf        # Notebook export        
+├── README.md                       # Project description
+├── judge_progress.csv              # Judging progress
+├── judge_results.csv               # Judging results
+├── model_outputs.csv               # Model outputs
+└── task4_summary.csv               # Task 4 summary  
+```
+---
+
+## Project Overview
 
 This project explores **alignment and evaluation of Large Language Models (LLMs)** using:
 
@@ -19,7 +34,7 @@ The objective is to fine-tune a pre-trained language model to produce **more tru
 
 ---
 
-# Project Pipeline
+## Project Pipeline
 
 ```
 Human Preference Dataset
@@ -48,7 +63,7 @@ Win Rate Calculation
 
 ---
 
-# Task 1 — Dataset Preparation
+## Task 1 — Dataset Preparation
 
 We use a preference dataset designed to improve model truthfulness.
 
@@ -74,7 +89,7 @@ The dataset is:
 
 ---
 
-# Task 2 — Model Training with DPO
+## Task 2 — Model Training with DPO
 
 We fine-tune a pre-trained language model using **Direct Preference Optimization (DPO)**.
 
@@ -118,7 +133,7 @@ Training loss is logged during optimization and visualized to monitor the traini
 
 ---
 
-# Task 3 — HuggingFace Model Upload
+## Task 3 — HuggingFace Model Upload
 
 After training, the fine-tuned model is uploaded to HuggingFace Hub.
 
@@ -132,7 +147,7 @@ This allows the trained model to be reused and evaluated easily.
 
 ---
 
-# Task 4 — Evaluation with LLM-as-a-Judge
+## Task 4 — Evaluation with LLM-as-a-Judge
 
 To evaluate model performance, we use the **AlpacaEval benchmark**.
 
@@ -168,7 +183,7 @@ Tie
 
 ---
 
-# Evaluation Pipeline
+## Evaluation Pipeline
 
 ```
 Prompt
@@ -191,7 +206,7 @@ Prompt
 
 ---
 
-# Results
+## Results
 
 | Metric           | Value   |
 | ---------------- | ------- |
@@ -210,7 +225,7 @@ Win Rate =
 
 ---
 
-# Discussion
+## Discussion
 
 The results show that the **DPO-trained model wins more comparisons than the baseline model**.
 
@@ -224,7 +239,7 @@ Despite the small training size, the results suggest that **DPO can improve resp
 
 ---
 
-# Technologies Used
+## Technologies Used
 
 | Tool         | Purpose                   |
 | ------------ | ------------------------- |
@@ -238,7 +253,7 @@ Despite the small training size, the results suggest that **DPO can improve resp
 
 ---
 
-# References
+## References
 
 DPO Trainer
 https://huggingface.co/docs/trl/main/dpo_trainer
